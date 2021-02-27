@@ -16,7 +16,7 @@ def convertToTxt(snbFile, destination = None):
     os.remove('snote/snote.xml')
     os.rmdir('snote')
 
-def convertFolder(directory):
+def convertDirectory(directory):
     os.chdir(directory)
     targetDirectory = '/'.join((directory, 'TXT'))
     os.mkdir(targetDirectory)
