@@ -1,16 +1,25 @@
-from os import path
+import os
 import re
 import zipfile
 
-def convertToTxt(snbFile):
-    zipfileObject = zipfile.ZipFile(snbFile)
-    zipfileObject.extract('snote/snote.xml')
-    zipfileObject.close()
-    with open('snote.xml', 'r') as xmlFile:
+def convertToTxt(snbFile, destination = None):
+    with zipfile.ZipFile(snbFile) as snbArchive:
+        snbArchive.extract('snote/snote.xml')
+    with open('snote/snote.xml', 'r') as xmlFile:
         xmlText = xmlFile.read()
     txtText = re.sub('<.*?>', '', xmlText)
     txtFileName = snbFile.replace('.snb', '.txt')
+    if destination != None:
+        txtFileName = '/'.join((destination, txtFileName))
     with open(txtFileName, 'w') as txtFile:
         txtFile.write(txtText)
+    os.remove('snote/snote.xml')
+    os.rmdir('snote')
 
-convertToTxt('Memo_20160202_122147724.snb') # for testing
+def convertFolder(directory):
+    os.chdir(directory)
+    targetDirectory = '/'.join((directory, 'TXT'))
+    os.mkdir(targetDirectory)
+    for i in os.listdir(directory):
+        if os.path.splitext(i)[1] == '.snb':
+            convertToTxt(i, targetDirectory)
