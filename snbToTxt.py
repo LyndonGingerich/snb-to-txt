@@ -1,15 +1,18 @@
+'''Converts SNB files to TXT files'''
+
 import os
 import re
 import zipfile
 
 def convertToTxt(snbFile, destination = None):
+    '''Used to convert a single file'''
     with zipfile.ZipFile(snbFile) as snbArchive:
         snbArchive.extract('snote/snote.xml')
     with open('snote/snote.xml', 'r') as xmlFile:
         xmlText = xmlFile.read()
     txtText = re.sub('<.*?>', '', xmlText)
     txtFileName = snbFile.replace('.snb', '.txt')
-    if destination != None:
+    if destination is not None:
         txtFileName = '/'.join((destination, txtFileName))
     with open(txtFileName, 'w') as txtFile:
         txtFile.write(txtText)
@@ -17,6 +20,7 @@ def convertToTxt(snbFile, destination = None):
     os.rmdir('snote')
 
 def convertDirectory(directory):
+    '''Used to convert a folder of SNB files'''
     os.chdir(directory)
     targetDirectory = '/'.join((directory, 'TXT'))
     os.mkdir(targetDirectory)
